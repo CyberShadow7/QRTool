@@ -112,7 +112,6 @@ func main() {
 				os.Exit(3)
 			}
 			scn(path)
-			os.Exit(0)
 		case "w":
 			//w()
 			// PENDING, IF IMPLEMENTED AT ALL
