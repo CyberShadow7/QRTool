@@ -1,4 +1,4 @@
-release/*
+release/
 *.png
 *.jpg
 *.jpeg
