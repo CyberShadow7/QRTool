@@ -52,7 +52,7 @@ This is to build the source code to be compatible with your own system. To build
 GOOS=windows GOARCH=amd64 GOAMD64=v3 go build main.go
 ```
 
-In <strong>specific</strong> architectures you can use an extra flag to specify what hardware you would like this app to be compatible with. Please consult [this resource]('https://go.dev/wiki/MinimumRequirements#amd64') for available options and [this one]('https://go.dev/doc/install/source#environment') for available combinations.
+In <strong>specific</strong> architectures you can use an extra flag to specify what hardware you would like this app to be compatible with. Please consult [this resource](https://go.dev/wiki/MinimumRequirements#amd64) for available options and [this one](https://go.dev/doc/install/source#environment) for available combinations.
 
 <strong>For specific operating systems, you need the c/c++ compiler and to make sure Go can find it.</strong>
 
