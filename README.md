@@ -3,41 +3,30 @@
 ## Use Cases
 This tool was created to give you the power to generate and/or read QR Codes which are stored locally in your machine.
 
-## Usage for Supplied Executables
-
-### Option 1 - Double Click
-You can double-click the executable file of this application and it will open a 
-CMD/Terminal window which can then be used normally in-line with the further
-instructions which are displayed during runtime.
-
-*-- OR --*
-
-### Option 2 - Run from Terminal/CMD
-The other option to run this application is to open a Terminal/CMD session and
-execute it from there. This is different between Windows and Linux/MacOS.
-
 #### Windows
 <hr>
 Open a CMD Session in any way you want, then
 
 ```dos
-cd Downloads
+cd /path/to/folder/
 qrTool_{arch}.exe
 ```
 
 <b><i>REMEMBER: </i></b>
-Replace `{arch}` with the software architecture on the filename.
+Replace `{arch}` with the software architecture on the filename.  
+<b>REMEMBER:</b> Please replace the `/path/to/folder` with the path where you downloaded the file.
 
 #### Linux/MacOS
 <hr>
 Open a Terminal and type :
 
 ```sh
-cd Downloads
+cd /path/to/folder/
 ./qrTool_{arch}_{OS}
 ```
 `{arch}` is the processor architecture.
 `{OS}` is the Operating System you are running the app on.
+<b>REMEMBER:</b> Please replace the `/path/to/folder/` with the path where you downloaded the file.  
 
 ## Compiling from Source
 To compile the source code you would need to have installed the go language on your system, which is available from [go.dev](https://go.dev/).
