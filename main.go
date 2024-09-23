@@ -12,9 +12,13 @@ import (
 	// QR reading library goqr
 	"github.com/liyue201/goqr"
 	// QR generation library go-qrcode (should be changed with customizations-able library github.com/yeqown/go-qrcode)
-	qrcode "github.com/skip2/go-qrcode" // Change with github.com/yeqown/go-qrcode
+	//qrcode "github.com/skip2/go-qrcode" // Change with github.com/yeqown/go-qrcode
+	// OpenCV
+	"github.com/yeqown/go-qrcode/v2"              // Main library
+	"github.com/yeqown/go-qrcode/writer/standard" // Writer for QR files
 )
 
+// Recon for QR codes in image file
 func reck(img image.Image) {
 	qrcodes, e := goqr.Recognize(img)
 	if e != nil {
@@ -24,7 +28,7 @@ func reck(img image.Image) {
 	dcd(qrcodes)
 }
 
-// Scan the qr code
+// Scan the QR code
 func scn(path string) {
 	// Read image data from file
 	dt, err := os.ReadFile(path)
@@ -53,30 +57,37 @@ func dcd(qrc []*goqr.QRData) {
 	}
 }
 
+// Insert data for created QR Code
 func cre() {
-	//a
+	// init scanner to accept input
 	sc := bufio.NewScanner(os.Stdin)
 	// Ask user for data to be encoded
 	fmt.Println("Please type the data you wish to encode : ")
 	sc.Scan()
 	txdt := sc.Text()
 	if sc.Err() != nil {
-		log.Fatalf("\nError reading from Scanner : %v\n", sc.Err())
+		log.Fatalf("\nI/O Error reading from Scanner : %v\n", sc.Err())
 		os.Exit(3)
 	}
 	fmt.Println("Please give a name to the output file including the extension : ")
 	sc.Scan()
 	fn := sc.Text()
 	if sc.Err() != nil {
-		log.Fatalf("\nError reading from Scanner : %v\n", sc.Err())
+		log.Fatalf("\nI/O Error reading from Scanner : %v\n", sc.Err())
 		os.Exit(3)
 	}
 	imp(txdt, fn)
 }
 
+// Encode QR Code data and Write-To-File
 func imp(txd string, fn string) {
 	dt := txd
-	qrcd, _ := qrcode.Encode(dt, qrcode.Highest, 256)
+	qrcd, err := qrcode.NewWith(dt,
+		qrcode.WithEncodingMode(qrcode.EncModeByte),
+		qrcode.WithErrorCorrectionLevel(qrcode.ErrorCorrectionHighest))
+	if err != nil {
+		panic(err)
+	}
 	file, e := os.Create(fn)
 	if e != nil {
 		log.Fatalf("\nError creating file : %v\n", e)
@@ -84,7 +95,13 @@ func imp(txd string, fn string) {
 	}
 	defer file.Close()
 
-	file.Write(qrcd)
+	//file.Write(qrcd)
+	w, e := standard.New(fn, standard.WithQRWidth(40))
+	if e != nil {
+		log.Fatalf("\nError creating file : %v\n", e)
+		os.Exit(4)
+	}
+	qrcd.Save(w)
 }
 
 func main() {
@@ -114,6 +131,7 @@ func main() {
 			scn(path)
 		case "w":
 			//w()
+			//fmt.Printf("gocv Version : %s\nOpenCV version : %s\n", gocv.Version(), gocv.OpenCVVersion())
 			// PENDING, IF IMPLEMENTED AT ALL
 		case "q":
 			// Quit the program
