@@ -3,11 +3,11 @@ package main
 import (
 	"bufio"
 	"bytes"
+	"flag"
 	"fmt"
 	"image"
 	"log"
 	"os"
-	"strings"
 
 	// QR reading library goqr
 	"github.com/liyue201/goqr"
@@ -16,6 +16,20 @@ import (
 	// OpenCV
 	"github.com/yeqown/go-qrcode/v2"              // Main library
 	"github.com/yeqown/go-qrcode/writer/standard" // Writer for QR files
+)
+
+var (
+	c                = flag.Bool("c", false, "Create a simple QR Code")
+	i                = flag.Bool("i", false, "Create a QR Code with custom image")
+	a                = flag.Bool("a", false, "Create a QR Code with control over all aspects available")
+	r                = flag.Bool("r", false, "Read a QR Code from a file")
+	p                = flag.String("path", "", "The path to the QR Code (only with -r)")
+	w                = flag.Bool("wc", false, "Read a QR Code from the webcam")
+	transparent      = flag.Bool("t", false, "Use transparent background (only with -i)")
+	data             = flag.String("data", "", "Data to be encoded in the QR Code")
+	img              = flag.String("img", "", "Image to use in the QR Code (only with -i)")
+	availableAspects = flag.Bool("av", false, "Show all available aspects")
+	help             = flag.Bool("h", false, "Show this help and exit")
 )
 
 // Recon for QR codes in image file
@@ -104,40 +118,112 @@ func imp(txd string, fn string) {
 	qrcd.Save(w)
 }
 
+// create a QR Code with a custom image
+func customImg() {
+	qrc, e := qrcode.New(*data)
+	if e != nil {
+		log.Fatalf("\nError parsing data : %v\n", e)
+		os.Exit(1)
+	}
+
+	options := []standard.ImageOption{
+		standard.WithHalftone(*img),
+		standard.WithQRWidth(21),
+	}
+
+	file := "./custom-qr.jpg"
+
+	if *transparent {
+		options = append(
+			options,
+			standard.WithBuiltinImageEncoder(standard.JPEG_FORMAT),
+			standard.WithBgTransparent(),
+		)
+
+		file = "./custom-qr-transparent.jpg"
+	}
+
+	w0, e := standard.New(file, options...)
+	if e != nil {
+		log.Fatalf("\nError creating file : %v\n", e)
+		os.Exit(2)
+	}
+
+	e = qrc.Save(w0)
+	if e != nil {
+		log.Fatalf("\nError saving data : %v\n", e)
+	}
+
+	e = w0.Close()
+	if e != nil {
+		log.Fatalf("Failed to close file : %v\n", e)
+	}
+}
+
 func main() {
-	rd := bufio.NewReader(os.Stdin)
-	s := bufio.NewScanner(os.Stdin)
-	acts := []string{"[c] Create QR Code", "[r] Read QR Code from file", "[w] Read QR Code from webcam", "[q] Quit"}
-	for {
-		fmt.Printf("Choose an action to perform : \n%s, %s, %s\n", acts[0], acts[1], acts[3])
-		c, e := rd.ReadString('\n')
-		if e != nil {
-			log.Fatalf("Error reading input from STDIN : %v\n", e)
-			os.Exit(2)
-		}
-		c = strings.TrimSpace(c)
-		switch c {
-		case "c":
+
+	flag.Parse()
+
+	if *help {
+		flag.CommandLine.SetOutput(os.Stdout)
+		flag.PrintDefaults()
+		return
+	}
+	if *c {
+		if *data != "" {
 			cre()
-		case "r":
-			//read from file
-			fmt.Printf("Please type the /path/to/file : ")
-			s.Scan()
-			path := s.Text()
-			if s.Err() != nil {
-				log.Fatalf("\nError reading from Scanner : %v\n", s.Err())
-				os.Exit(3)
-			}
-			scn(path)
-		case "w":
-			//w()
-			//fmt.Printf("gocv Version : %s\nOpenCV version : %s\n", gocv.Version(), gocv.OpenCVVersion())
-			// PENDING, IF IMPLEMENTED AT ALL
-		case "q":
-			// Quit the program
-			os.Exit(0)
-		default:
-			fmt.Printf("Input not recognized.\nPlease choose from available inputs.\n")
+		} else {
+			fmt.Printf("\nMissing argument for -data\n")
+			return
 		}
 	}
+	if *i {
+		if *data != "" || *img != "" {
+			customImg()
+		} else {
+			fmt.Printf("\nMissing argument for -data or -img\n")
+			return
+		}
+	}
+	if *a {
+		//if *as1 {
+		//
+		//}
+		// check if all needed aspects are present.
+		fmt.Println("This is a work-in-progress")
+		return
+	}
+	if *r {
+		if *p != "" {
+			scn(*p)
+		} else {
+			fmt.Printf("\nMissing argument for -path\n")
+			return
+		}
+	}
+	if *w {
+		fmt.Println("This feature is a work-in-progress")
+		return
+	}
+	if *availableAspects {
+		fmt.Println("This is a work-in-progress")
+		fmt.Printf(`Image Ecnoder : JPEG, PNG
+Background : Transparent
+QR Width : Integer (if used with -i, must be 21)
+Encoding Mode : Byte/Binary, Kenji, Numeric, Alphanumeric
+Error Correction Level : L (7%%  error recovery), M (15%% error recovery - default), Q (25%% error recovery), H (30%% error recovery)
+LogoImage : Add an icon at the center of the QR Code
+LogoImageFilePNG / LogoImageFileJPEG : Same functionality as above
+Background Color : You can specify a custom background color
+Foreground Color : You can specify a custom foreground color
+Shape : Rectangle (default), Circle, Custom
+`)
+		//fmt.Println("hi")
+		return
+	}
+	if !*c && !*i && !*r && !*a && !*w && !*help && !*availableAspects {
+		flag.PrintDefaults()
+		return
+	}
+
 }
