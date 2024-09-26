@@ -218,7 +218,6 @@ Background Color : You can specify a custom background color
 Foreground Color : You can specify a custom foreground color
 Shape : Rectangle (default), Circle, Custom
 `)
-		//fmt.Println("hi")
 		return
 	}
 	if !*c && !*i && !*r && !*a && !*w && !*help && !*availableAspects {
