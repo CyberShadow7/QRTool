@@ -17,6 +17,8 @@ import (
 	"github.com/yeqown/go-qrcode/writer/standard" // Writer for QR files
 )
 
+//fixing a typo
+
 var (
 	c                = flag.Bool("c", false, "Create a simple QR Code")
 	i                = flag.Bool("i", false, "Create a QR Code with custom image")
