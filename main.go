@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bufio"
 	"bytes"
 	"flag"
 	"fmt"
@@ -28,6 +27,8 @@ var (
 	transparent      = flag.Bool("t", false, "Use transparent background (only with -i)")
 	data             = flag.String("data", "", "Data to be encoded in the QR Code")
 	img              = flag.String("img", "", "Image to use in the QR Code (only with -i)")
+	format           = flag.String("format", "", "Use this format for the output image")
+	out              = flag.String("o", "", "Output file name")
 	availableAspects = flag.Bool("av", false, "Show all available aspects")
 	help             = flag.Bool("h", false, "Show this help and exit")
 )
@@ -36,7 +37,7 @@ var (
 func reck(img image.Image) {
 	qrcodes, e := goqr.Recognize(img)
 	if e != nil {
-		log.Fatal("Recognition of QR codes failed : ", e)
+		log.Fatalf("\nRecognition of QR codes failed : %v\n", e)
 		return
 	}
 	dcd(qrcodes)
@@ -47,14 +48,14 @@ func scn(path string) {
 	// Read image data from file
 	dt, err := os.ReadFile(path)
 	if err != nil {
-		log.Fatalf("Error reading file : %v\n", err)
+		log.Fatalf("\nError reading file : %v\n", err)
 		return
 	}
 
 	// Decode image (dt)
 	img, _, e := image.Decode(bytes.NewReader(dt))
 	if e != nil {
-		log.Fatalf("Error with image.Decode() : %v\n", e)
+		log.Fatalf("\nError with image.Decode() : %v\n", e)
 		return
 	}
 
@@ -71,46 +72,27 @@ func dcd(qrc []*goqr.QRData) {
 	}
 }
 
-// Insert data for created QR Code
-func cre() {
-	// init scanner to accept input
-	sc := bufio.NewScanner(os.Stdin)
-	// Ask user for data to be encoded
-	fmt.Println("Please type the data you wish to encode : ")
-	sc.Scan()
-	txdt := sc.Text()
-	if sc.Err() != nil {
-		log.Fatalf("\nI/O Error reading from Scanner : %v\n", sc.Err())
-		os.Exit(3)
-	}
-	fmt.Println("Please give a name to the output file including the extension : ")
-	sc.Scan()
-	fn := sc.Text()
-	if sc.Err() != nil {
-		log.Fatalf("\nI/O Error reading from Scanner : %v\n", sc.Err())
-		os.Exit(3)
-	}
-	imp(txdt, fn)
-}
-
 // Encode QR Code data and Write-To-File
-func imp(txd string, fn string) {
-	dt := txd
-	qrcd, err := qrcode.NewWith(dt,
+func createSimple() {
+	qrcd, err := qrcode.NewWith(
+		*data,
 		qrcode.WithEncodingMode(qrcode.EncModeByte),
-		qrcode.WithErrorCorrectionLevel(qrcode.ErrorCorrectionHighest))
+		qrcode.WithErrorCorrectionLevel(qrcode.ErrorCorrectionHighest),
+	)
+
 	if err != nil {
 		panic(err)
 	}
-	file, e := os.Create(fn)
-	if e != nil {
-		log.Fatalf("\nError creating file : %v\n", e)
-		os.Exit(4)
-	}
-	defer file.Close()
 
-	//file.Write(qrcd)
-	w, e := standard.New(fn, standard.WithQRWidth(40))
+	var file string
+
+	if *out != "" {
+		file = *out
+	} else {
+		file = "qr.jpg"
+	}
+
+	w, e := standard.New(file, standard.WithQRWidth(40))
 	if e != nil {
 		log.Fatalf("\nError creating file : %v\n", e)
 		os.Exit(4)
@@ -131,7 +113,7 @@ func customImg() {
 		standard.WithQRWidth(21),
 	}
 
-	file := "./custom-qr.jpg"
+	file := *out
 
 	if *transparent {
 		options = append(
@@ -140,7 +122,7 @@ func customImg() {
 			standard.WithBgTransparent(),
 		)
 
-		file = "./custom-qr-transparent.jpg"
+		file = *out
 	}
 
 	w0, e := standard.New(file, options...)
@@ -160,6 +142,68 @@ func customImg() {
 	}
 }
 
+func customAll() {
+	qrc, e := qrcode.New(*data)
+	if e != nil {
+		log.Panicf("\n[!] Error reading data : %v\n", e)
+		os.Exit(1)
+	}
+
+	options := []standard.ImageOption{}
+
+	if *i {
+		options = append(
+			options,
+			standard.WithHalftone(*img),
+		)
+	}
+	if *transparent {
+		options = append(
+			options,
+			standard.WithBgTransparent(),
+		)
+	}
+
+	file := "./qr-code.jpg"
+
+	if *format != "" {
+		// Translate JPEG and PNG into standard.JPEG_FORMAT or standard.PNG_FORMAT accordingly.
+		// Default is JPEG, by the library, but we are giving the end-user as much control as
+		// the library allows.
+		//
+		// This could become its own function in a future update.
+		if *format == "JPEG" {
+			options = append(
+				options,
+				standard.WithBuiltinImageEncoder(standard.JPEG_FORMAT),
+			)
+			file = *out
+		}
+		if *format == "PNG" {
+			options = append(
+				options,
+				standard.WithBuiltinImageEncoder(standard.PNG_FORMAT),
+			)
+			file = *out
+		}
+	}
+
+	w1, e := standard.New(file, options...)
+	if e != nil {
+		log.Fatalf("\n[!] Error creating file : %v\n", e)
+	}
+
+	e = qrc.Save(w1)
+	if e != nil {
+		log.Fatalf("\n[!] Error saving data : %v\n", e)
+	}
+
+	e = w1.Close()
+	if e != nil {
+		log.Fatalf("\n[!] Failed to close file : %v\n", e)
+	}
+}
+
 func main() {
 
 	flag.Parse()
@@ -171,7 +215,7 @@ func main() {
 	}
 	if *c {
 		if *data != "" {
-			cre()
+			createSimple()
 		} else {
 			fmt.Printf("\nMissing argument for -data\n")
 			return
@@ -191,7 +235,11 @@ func main() {
 		//}
 		// check if all needed aspects are present.
 		fmt.Println("This is a work-in-progress")
-		return
+		if *data != "" || *out != "" || *format != "" {
+			customAll()
+		} else {
+			fmt.Printf("\nMissing a needed argument!\n")
+		}
 	}
 	if *r {
 		if *p != "" {
