@@ -122,7 +122,7 @@ func customImg() {
 			standard.WithBgTransparent(),
 		)
 
-		file = *ou
+		file = *out
 	}
 
 	w0, e := standard.New(file, options...)
