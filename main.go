@@ -256,7 +256,18 @@ func main() {
 	}
 	if *availableAspects {
 		fmt.Println("This is a work-in-progress")
-		fmt.Printf(`Image Ecnoder : JPEG, PNG
+		showAllAspects()
+		return
+	}
+	if !*c && !*i && !*r && !*a && !*w && !*help && !*availableAspects {
+		flag.PrintDefaults()
+		return
+	}
+
+}
+
+func showAllAspects() {
+	fmt.Printf(`Image Ecnoder : JPEG, PNG
 Background : Transparent
 QR Width : Integer (if used with -i, must be 21)
 Encoding Mode : Byte/Binary, Kenji, Numeric, Alphanumeric
@@ -267,11 +278,4 @@ Background Color : You can specify a custom background color
 Foreground Color : You can specify a custom foreground color
 Shape : Rectangle (default), Circle, Custom
 `)
-		return
-	}
-	if !*c && !*i && !*r && !*a && !*w && !*help && !*availableAspects {
-		flag.PrintDefaults()
-		return
-	}
-
 }
