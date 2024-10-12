@@ -22,6 +22,7 @@ var (
 	c                = flag.Bool("c", false, "Create a simple QR Code")
 	i                = flag.Bool("i", false, "Create a QR Code with custom image")
 	a                = flag.Bool("a", false, "Create a QR Code with control over all aspects available")
+	l                = flag.Bool("logo", false, "Create a QR Code with a logo (JPEG file only)")
 	r                = flag.Bool("r", false, "Read a QR Code from a file")
 	p                = flag.String("path", "", "The path to the QR Code (only with -r)")
 	w                = flag.Bool("wc", false, "Read a QR Code from the webcam")
@@ -143,6 +144,32 @@ func customImg() {
 	}
 }
 
+// Add a logo to the QR Code
+func logo() {
+	qrc, e := qrcode.NewWith(*data,
+		qrcode.WithEncodingMode(qrcode.EncModeByte),
+		qrcode.WithErrorCorrectionLevel(qrcode.ErrorCorrectionHighest),
+	)
+
+	if e != nil {
+		log.Printf("Error reading data : %v\n", e)
+	}
+	file := *out
+	w, e := standard.New(
+		file,
+		standard.WithLogoImageFileJPEG(*img),
+		standard.WithLogoSizeMultiplier(2),
+	)
+
+	if e != nil {
+		log.Printf("An error occured : %v\n", e)
+	}
+
+	if e = qrc.Save(w); e != nil {
+		panic(e)
+	}
+}
+
 func customAll() {
 	qrc, e := qrcode.New(*data)
 	if e != nil {
@@ -259,7 +286,16 @@ func main() {
 		showAllAspects()
 		return
 	}
-	if !*c && !*i && !*r && !*a && !*w && !*help && !*availableAspects {
+	if *l {
+		fmt.Println("This is a work-in-progress")
+		if *img != "" || *data != "" || *out != "" {
+			logo()
+		} else {
+			fmt.Println("Missing needed arguments")
+		}
+		return
+	}
+	if !*c && !*i && !*r && !*a && !*w && !*l && !*help && !*availableAspects {
 		flag.PrintDefaults()
 		return
 	}
