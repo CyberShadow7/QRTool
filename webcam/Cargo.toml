@@ -1,0 +1,12 @@
+[package]
+name = "webcam"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+opencv = "0.93.3"
+regex = "1.11.0"
+webbrowser = "1.0.2"
+threadpool = "1.8.1"
+rfd = "0.15.0"
+copypasta = "0.10.1"
