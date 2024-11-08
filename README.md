@@ -36,7 +36,7 @@ Supposing you have installed correctly the Go Programming Language on your syste
 go build main.go
 ```
 
-This is to build the source code to be compatible with your own system. To build versions for other systems you can use the `GOOS` switch and/or the `GOARCH` build switches like  
+This is to build the source code to be compatible with your own system. To build versions for other systems you can use the `GOOS` and/or the `GOARCH` build environment variables like  
 ```sh
 GOOS=windows GOARCH=amd64 GOAMD64=v3 go build main.go
 ```
