@@ -1,1 +1,16 @@
-target/
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.so
+*.d
+*.rlib
+*.json
+*.TAG
+.cargo-lock
+target/debug/
+target/release/build/
+target/release/.fingerprint/
+target/release/deps/
+target/release/examples/
+target/release/incremental/

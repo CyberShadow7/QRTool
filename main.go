@@ -7,6 +7,8 @@ import (
 	"image"
 	"log"
 	"os"
+	"os/exec"
+	"runtime"
 
 	// QR reading library goqr
 	"github.com/liyue201/goqr"
@@ -279,6 +281,7 @@ func main() {
 	}
 	if *w {
 		fmt.Println("This feature is a work-in-progress")
+		wcam()
 		return
 	}
 	if *availableAspects {
@@ -314,4 +317,19 @@ Background Color : You can specify a custom background color
 Foreground Color : You can specify a custom foreground color
 Shape : Rectangle (default), Circle, Custom
 `)
+}
+
+func wcam() {
+	// Execute final compiled executable here!
+	cmd := exec.Command("webcam/target/release/webcam")
+	if runtime.GOOS == "windows" { // Update this to inclued different architectures and fix final file names
+		cmd = exec.Command("webcam/target/release/webcam.exe")
+	}
+	// Assign stdout and stderr
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	e := cmd.Run()
+	if e != nil {
+		fmt.Printf("There was an error executing the command: %v", e)
+	}
 }
