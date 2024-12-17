@@ -14,7 +14,6 @@ import (
 	"github.com/liyue201/goqr"
 	// QR generation library go-qrcode (should be changed with customizations-able library github.com/yeqown/go-qrcode)
 	//qrcode "github.com/skip2/go-qrcode" // Change with github.com/yeqown/go-qrcode
-	// OpenCV
 	"github.com/yeqown/go-qrcode/v2"              // Main library
 	"github.com/yeqown/go-qrcode/writer/standard" // Writer for QR files
 )
