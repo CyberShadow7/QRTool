@@ -2,8 +2,8 @@
 
 - Add options to choose customizations for QR Code generation
 - Test MacOS executables work
-- Implement OpenCV / TensorFlow to read QR code from (web)cam
-- Create a GUI version
+- Link QUIRC OpenCV library
+- Create a cross-platform GUI for the Go portion of the program
 
 # Tasks Completed
 
