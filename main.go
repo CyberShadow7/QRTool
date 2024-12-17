@@ -91,7 +91,7 @@ func createSimple() {
 	var file string
 
 	if *out != "" {
-		file = *out
+		file = *out + ".jpg"
 	} else {
 		file = "qr.jpg"
 	}
@@ -120,13 +120,18 @@ func customImg() {
 	file := *out
 
 	if *transparent {
+		if *format == "PNG" {
+			fmt.Println("[!] - The transparent background is only supported in JPEG format!")
+			fmt.Println("[!] Exiting...")
+			os.Exit(1)
+		}
 		options = append(
 			options,
 			standard.WithBuiltinImageEncoder(standard.JPEG_FORMAT),
 			standard.WithBgTransparent(),
 		)
 
-		file = *out
+		file = *out + ".jpg"
 	}
 
 	w0, e := standard.New(file, options...)
@@ -156,7 +161,7 @@ func logo() {
 	if e != nil {
 		log.Printf("Error reading data : %v\n", e)
 	}
-	file := *out
+	file := *out + ".jpg"
 	w, e := standard.New(
 		file,
 		standard.WithLogoImageFileJPEG(*img),
@@ -207,14 +212,14 @@ func customAll() {
 				options,
 				standard.WithBuiltinImageEncoder(standard.JPEG_FORMAT),
 			)
-			file = *out
+			file = *out + ".jpg"
 		}
 		if *format == "PNG" {
 			options = append(
 				options,
 				standard.WithBuiltinImageEncoder(standard.PNG_FORMAT),
 			)
-			file = *out
+			file = *out + ".png"
 		}
 	}
 
@@ -237,6 +242,9 @@ func customAll() {
 func main() {
 
 	flag.Parse()
+
+	// Check that there is an output filename defined.
+	cOutDefined()
 
 	if *help {
 		flag.CommandLine.SetOutput(os.Stdout)
@@ -331,5 +339,12 @@ func wcam() {
 	e := cmd.Run()
 	if e != nil {
 		fmt.Printf("There was an error executing the command: %v", e)
+	}
+}
+
+// This function is to avoid trying to write files with empty filenames
+func cOutDefined() {
+	if *out == "" {
+		*out = "qr_output_image"
 	}
 }
