@@ -33,6 +33,8 @@ var (
 	img              = flag.String("img", "", "Image to use in the QR Code (only with -i)")
 	format           = flag.String("format", "", "Use this format for the output image")
 	out              = flag.String("o", "", "Output file name")
+	shape            = flag.String("sh", "rectangle", "Shape of QR Code bits ('rectangle', 'circle', 'custom') (only with -a)")
+	shize            = flag.Int("ss", 16, "The size of the shape (only with -sh)")
 	availableAspects = flag.Bool("av", false, "Show all available aspects")
 	help             = flag.Bool("h", false, "Show this help and exit")
 )
@@ -200,6 +202,14 @@ func customAll() {
 	}
 
 	file := "./qr-code.jpg"
+
+	if *shape == "rectangle" {
+		// placeholder
+	}
+
+	if *shize == 16 {
+		// placeholder
+	}
 
 	if *format != "" {
 		// Translate JPEG and PNG into standard.JPEG_FORMAT or standard.PNG_FORMAT accordingly.
