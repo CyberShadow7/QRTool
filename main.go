@@ -200,7 +200,7 @@ func customAll() {
 		)
 	}
 
-	file := "./qr-code.jpg"
+	file := *out
 
 	if *shape == "rectangle" {
 		// placeholder
