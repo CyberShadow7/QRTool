@@ -3,8 +3,8 @@
 ## Use Cases
 This tool was created to give you the power to generate and/or read QR Codes which are stored locally in your machine.
 
-## Temporary WARNING!
-As of now, the webcam functionality is a bit static, and the shipped executable under `webcam/target/release` should be rebuilt locally for your own OS.
+## WARNING!
+As of now, the webcam functionality is static, and the shipped executable under `webcam/target/release` should be rebuilt locally for your own OS.
 To do this, you need to have [Rust](https://www.rust-lang.org/) on your machine.
 
 To build with Cargo (the Rust compiler) after you navigate to the `webcam/` folder, you need to use
@@ -20,7 +20,7 @@ Open a CMD Session in any way you want, then
 
 ```dos
 cd /path/to/folder/
-qrTool_{arch}.exe
+qrTool-windows-{arch}.exe
 ```
 
 <b><i>REMEMBER: </i></b>
@@ -33,7 +33,7 @@ Open a Terminal and type :
 
 ```sh
 cd /path/to/folder/
-./qrTool_{arch}_{OS}
+./qrTool-{OS}-{arch}
 ```
 `{arch}` is the processor architecture.
 `{OS}` is the Operating System you are running the app on.

@@ -16,4 +16,5 @@ webcam/target/release/deps/
 webcam/target/release/examples/
 webcam/target/release/incremental/
 rel/
-
+camera-detect/
+.code*

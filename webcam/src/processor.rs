@@ -1,3 +1,5 @@
+extern crate opencv;
+
 use opencv::{
     core::{Point, Vector},
     highgui,
@@ -32,9 +34,11 @@ impl QrCodeProcessor {
         // 0 is the default camera
         let mut cam = videoio::VideoCapture::new(0, videoio::CAP_ANY)?;
         if !videoio::VideoCapture::is_opened(&cam)? {
-            eprintln!("Unable to open default camera!");
-            return Ok(())
+            eprintln!("Unable to open default camera: {:?}", &cam);
+            return Err(opencv::Error::new(opencv::core::StsError, "Camera not opened".to_string()));
         }
+
+        println!("Camera opened successfully!");
 
         // Initialize QR Code detector
         let detector = objdetect::QRCodeDetector::default()?;

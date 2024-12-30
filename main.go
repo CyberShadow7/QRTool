@@ -339,7 +339,7 @@ Shape : Rectangle (default), Circle, Custom
 func wcam() {
 	// Execute final compiled executable here!
 	cmd := exec.Command("webcam/target/release/webcam")
-	if runtime.GOOS == "windows" { // Update this to inclued different architectures and fix final file names
+	if runtime.GOOS == "windows" {
 		cmd = exec.Command("webcam/target/release/webcam.exe")
 	}
 	// Assign stdout and stderr

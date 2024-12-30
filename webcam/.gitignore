@@ -15,3 +15,4 @@ target/release/deps/
 target/release/examples/
 target/release/incremental/
 target/x86*
+build.rs
